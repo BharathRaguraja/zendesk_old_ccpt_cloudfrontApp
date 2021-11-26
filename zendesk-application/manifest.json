@@ -1,0 +1,33 @@
+{
+  "name": "Arta - Amazon Connect Connector",
+  "author": {
+    "name": "Sandeza",
+    "email": "connect@sandeza-inc.com",
+    "url": "https://www.sandeza.io"
+  },
+  "defaultLocale": "en",
+  "private": false,
+  "location": {
+    "support": {
+      "top_bar": "assets/iframe.html"
+    }
+  },
+  "version": "1.0.0",
+  "frameworkVersion": "2.0",
+  "domainWhitelist":["devapi.arta.sandeza.io","d3v-sandeza.zendesk.com"],
+  "parameters": [
+    {
+      "name": "ACCESSKEY",
+      "type": "text",
+      "required": true,
+      "secure": true
+    },
+    {
+      "name": "INTEGRATIONID",
+      "type": "text",
+      "required": true,
+      "secure": true
+    }
+  ]
+ 
+}

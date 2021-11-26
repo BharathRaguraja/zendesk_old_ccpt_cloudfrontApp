@@ -1,0 +1,23 @@
+{
+  "app": {
+    "name": "Amazon Connect Connector by Arta",
+    "short_description": "Arta - Amazon Connect's Contact Control Panel Support for Zendesk",
+    "long_description": "Available to all customers on a Zendesk Suite plan or Customers with Support + Talk Partner Edition - Learn more at https://www.zendesk.com/pricing\n\n### About Us\n\n### Sandeza aims to play a key role in the technology revolution sweeping the global business world. We are a business-oriented, customer-centric Technology solutions company,founded by professionals experienced in technology delivery tailored to business outcomes.Leveraging our experience in cloud & data analytics technologies,we help businesses build intelligent analytics and communication systems.Let’s harness technology to power the end-user experience.\n\n ### Amazon Connect Connector by Arta\n\n### Arta makes use of Amazon Connect's contact center supports to be tightly integrated with Zendesk.Companies using Zendesk can make uses of Arta's CCP for making call's,listing callers open tickets,adding notes,creating new tickets along with the contact details.\n\n## Features\n\n- Make Inbound and Outbound calls\n\n- Create Tickets from inside the Contact Control Panel\n\n- View Callers Open Tickets\n\n- Add End Call notes\n\n- Get Callers Phone Number and other details from Amazon Connect.",
+    "installation_instructions":"\n\n### Login To Arta Platform, select Zendesk from integrations, enter the credential's to obtain access key and integration id add the access Key and integration id to installation parameters in Zendesk.\n\n### Please refer to the below link for for instructions\n\nhttps://docs.arta.sandeza.io/"
+  },
+  "parameters": [
+    {
+      "name": "ACCESSKEY",
+      "type": "text",
+      "required": true,
+      "secure": true
+    },
+    {
+      "name": "INTEGRATIONID",
+      "type": "text",
+      "required": true,
+      "secure": true
+    }
+  ]
+}
+
