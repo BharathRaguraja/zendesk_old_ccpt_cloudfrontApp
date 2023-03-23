@@ -1,6 +1,6 @@
 <template>
   <div class="ccp-container">
-    <div id="containerDiv" style="display:none"/>
+    <div id="defaultCCP" ref="containerDiv" style="display:none"/>
     <b-container v-if="loggedin" class="bv-example-row">
 
       <!-- title bar  -->
@@ -525,7 +525,7 @@
 
     <b-container v-if="!loggedin && currentActiveTab <=0" class="bv-example-row pre-signin">
         <h4>Signin to AWS Instance</h4>
-        <!-- <h6 style="color: #00425f !important;"> <strong>{{ connect_url}} </strong></h6> -->
+        <h6 style="color: #00425f !important;"> <strong>{{ connect_url}} </strong></h6>
         <!-- <b-button style="margin-bottom:10px" size="sm" @click="openLogin()">Click to signin</b-button> -->
         <h6>Refresh the tab if you face any issues</h6>
     </b-container>
@@ -539,6 +539,8 @@
 
 <script>
 import { ModelListSelect } from 'vue-search-select'
+import 'amazon-connect-streams'
+import 'amazon-connect-chatjs'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import 'flag-icon-css/css/flag-icon.css'
@@ -556,20 +558,20 @@ export default {
       numberState() {
         return this.contactForm.contactNumber.length >= 10 ? true : false
       },
-      nameInvalidFeedback() {
-        if (this.contactForm.contactName.length > 4) {
-          return ''
-        } else if (this.contactForm.contactName.length > 0) {
-          return 'Enter at least 4 characters'
-        }
-      },
-      contactInvalidFeedback() {
-        if (this.contactForm.contactNumber.length > 10) {
-          return ''
-        } else if (this.contactForm.contactNumber.length > 0) {
-          return 'Enter valid phone number'
-        }
-      },
+      // nameInvalidFeedback() {
+      //   if (this.contactForm.contactName.length > 4) {
+      //     return ''
+      //   } else if (this.contactForm.contactName.length > 0) {
+      //     return 'Enter at least 4 characters'
+      //   }
+      // },
+      // contactInvalidFeedback() {
+      //   if (this.contactForm.contactNumber.length > 10) {
+      //     return ''
+      //   } else if (this.contactForm.contactNumber.length > 0) {
+      //     return 'Enter valid phone number'
+      //   }
+      // },
     },
   data() {
     return {
@@ -607,7 +609,7 @@ export default {
       agentStatus: '',
       changeItem : 0,
       toggle_call_history: true,
-      toggle_dial_pad: false,
+      // toggle_dial_pad: false,
       toggle_country_code : false,
       toggle_country_code_settings: false,
       toggle_call_block: false, //false
@@ -687,14 +689,18 @@ export default {
   
   created(){
     let uri = window.location.search.substring(1); 
+    console.log("THIS IS uri",uri)
     let params = new URLSearchParams(uri);
+    console.log("THIS IS PARAMS",params)
     this.connect_url = params.get("connect_url");
-    this.access_key = params.get("access_key");
-    this.integration_id = params.get("integration_id");
-    //console.log("URL params url ==> " +params.get("connect_url"));
+
+    // this.connect_url = 'https://sandeza-testing.my.connect.aws'
+    // this.access_key = params.get("access_key");
+    // this.integration_id = params.get("integration_id");
+    console.log("URL params url ==> " +params.get("connect_url"));
     console.log("%%%%=>")
     console.log("%%%%=>" + window.top.location.href)
-    console.log("%%%%=>" + this.access_key + "   " + this.integration_id)
+    // console.log("%%%%=>" + this.access_key + "   " + this.integration_id)
   },
   mounted() {
     this.handleLogin();
@@ -815,128 +821,128 @@ export default {
 
       }
     },
-    async backendCreateNormalNote(payload) {
+    // async backendCreateNormalNote(payload) {
 
 
-      let { action , ticketId , note } = payload
+    //   let { action , ticketId , note } = payload
 
-      var headers = {
-          "Content-Type": "application/json",
-          "Authorization": this.access_key + ":" + this.integration_id
-      };
+    //   var headers = {
+    //       "Content-Type": "application/json",
+    //       "Authorization": this.access_key + ":" + this.integration_id
+    //   };
 
-      var options = { headers: headers};
+    //   var options = { headers: headers};
 
-      try {
+    //   try {
 
-        console.log({ note : note , ticketId : ticketId + "", type : action , contactId : "null" , agentHandled : "null" })
+    //     console.log({ note : note , ticketId : ticketId + "", type : action , contactId : "null" , agentHandled : "null" })
 
-        let data = await axios.post('https://devapi.arta.sandeza.io/integration/v1/helpdesk/note', { note : note , ticketId : ticketId + "", type : action , contactId : "null" , agentHandled : "null" }, options);
+    //     let data = await axios.post('https://devapi.arta.sandeza.io/integration/v1/helpdesk/note', { note : note , ticketId : ticketId + "", type : action , contactId : "null" , agentHandled : "null" }, options);
       
-        console.log(data)
+    //     console.log(data)
 
-        this.newNoteCreated = "success"
-        let passData = {}
-        passData.action = "addNote"
-        passData.type = "success"
-        passData.ticketId = ticketId
-        passData.message = "Call Notes added in ticket #" + ticketId
-        parent.postMessage(passData,"*");
+    //     this.newNoteCreated = "success"
+    //     let passData = {}
+    //     passData.action = "addNote"
+    //     passData.type = "success"
+    //     passData.ticketId = ticketId
+    //     passData.message = "Call Notes added in ticket #" + ticketId
+    //     parent.postMessage(passData,"*");
 
-      } catch(e) {
-        let passData = {}
-        passData.action = "addNoteFail"
-        passData.type = "danger"
-        passData.message = "Adding call notes failed"
-        parent.postMessage(passData,"*");
-        console.log(e)
-      }
-    },
-    async backendCreateEndcallNote(payload) {
+    //   } catch(e) {
+    //     let passData = {}
+    //     passData.action = "addNoteFail"
+    //     passData.type = "danger"
+    //     passData.message = "Adding call notes failed"
+    //     parent.postMessage(passData,"*");
+    //     console.log(e)
+    //   }
+    // },
+    // async backendCreateEndcallNote(payload) {
 
 
-      let { action , ticketId , contactId , agentHandled} = payload
+    //   let { action , ticketId , contactId , agentHandled} = payload
 
-      var headers = {
-          "Content-Type": "application/json",
-          "Authorization": this.access_key + ":" + this.integration_id
-      };
+    //   var headers = {
+    //       "Content-Type": "application/json",
+    //       "Authorization": this.access_key + ":" + this.integration_id
+    //   };
 
-      var options = { headers: headers};
+    //   var options = { headers: headers};
 
-      try {
+    //   try {
 
-      let data = await axios.post('https://devapi.arta.sandeza.io/integration/v1/helpdesk/note', { note : "null" , ticketId : ticketId + "", type : action , contactId : contactId + "" , agentHandled : agentHandled }, options);
+    //   let data = await axios.post('https://devapi.arta.sandeza.io/integration/v1/helpdesk/note', { note : "null" , ticketId : ticketId + "", type : action , contactId : contactId + "" , agentHandled : agentHandled }, options);
       
-        console.log(data)
+    //     console.log(data)
 
-        this.newNoteCreated = "success"
+    //     this.newNoteCreated = "success"
 
-        let passData = {}
+    //     let passData = {}
 
-        passData.action = "addNote"
-        passData.type = "success"
-        passData.ticketId = ticketId
-        passData.message = "Endcall Notes added in ticket #" + ticketId
-        parent.postMessage(passData,"*");
+    //     passData.action = "addNote"
+    //     passData.type = "success"
+    //     passData.ticketId = ticketId
+    //     passData.message = "Endcall Notes added in ticket #" + ticketId
+    //     parent.postMessage(passData,"*");
 
-      } catch(e) {
-        let passData = {}
-        passData.action = "addNoteFail"
-        passData.type = "danger"
-        passData.message = "Endcall Notes adding failed"
-        parent.postMessage(passData,"*");
-        console.log(e)
-      }
-    },
-    async backendCreateContact(payload) {
+    //   } catch(e) {
+    //     let passData = {}
+    //     passData.action = "addNoteFail"
+    //     passData.type = "danger"
+    //     passData.message = "Endcall Notes adding failed"
+    //     parent.postMessage(passData,"*");
+    //     console.log(e)
+    //   }
+    // },
+    // async backendCreateContact(payload) {
 
-      let { contactName , contactNumber } = payload
+    //   let { contactName , contactNumber } = payload
 
-      var headers = {
-          "Content-Type": "application/json",
-          "Authorization": this.access_key + ":" + this.integration_id
-      };
+    //   var headers = {
+    //       "Content-Type": "application/json",
+    //       "Authorization": this.access_key + ":" + this.integration_id
+    //   };
 
-      var options = { headers: headers};
+    //   var options = { headers: headers};
 
-      try {
+    //   try {
 
-      let data = await axios.post('https://devapi.arta.sandeza.io/integration/v1/helpdesk/contact', { contactName : contactName , contactNumber : contactNumber }, options);
+    //   let data = await axios.post('https://devapi.arta.sandeza.io/integration/v1/helpdesk/contact', { contactName : contactName , contactNumber : contactNumber }, options);
       
-      this.newContactCreated = "success"
-      let passData = {}
-      passData.action = "openContact"
-      passData.type = "success"
-      passData.contactId = data.data.message.contactId
-      passData.message = "Added to contacts sucessfully"
-      parent.postMessage(passData,"*");
+    //   this.newContactCreated = "success"
+    //   let passData = {}
+    //   passData.action = "openContact"
+    //   passData.type = "success"
+    //   passData.contactId = data.data.message.contactId
+    //   passData.message = "Added to contacts sucessfully"
+    //   parent.postMessage(passData,"*");
 
-      } catch(e) {
-        console.log(e)
-        let passData = {}
-        passData.action = "openContactFail"
-        passData.type = "danger"
-        passData.message = "Failed to create contact"
-        parent.postMessage(passData,"*");
-      }
-    },
+    //   } catch(e) {
+    //     console.log(e)
+    //     let passData = {}
+    //     passData.action = "openContactFail"
+    //     passData.type = "danger"
+    //     passData.message = "Failed to create contact"
+    //     parent.postMessage(passData,"*");
+    //   }
+    // },
     async getContacts() {
 
       var headers = {
           "Content-Type": "application/json",
-          "Authorization": this.access_key + ":" + this.integration_id
+          "Authorization": "9lbr4YVd6WeOTucnfPTnTJnB0i4gVH7E8sExiYVI"
       };
 
       var options = { headers: headers};
 
       try {
 
-      let data = await axios.get('https://devapi.arta.sandeza.io/integration/v1/helpdesk/contact', options);
+      let data = await axios.get('https://d3v-sandeza.zendesk.com/api/v2/users', options);
 
       this.contacts = data.data;
       
-      console.log(this.contacts)
+      console.log("GET CONTACT INFO",this.contacts)
 
       } catch(e) {
         console.log(e)
@@ -948,16 +954,17 @@ export default {
 
       var headers = {
           "Content-Type": "application/json",
-          "Authorization": this.access_key + ":" + this.integration_id
+          "Authorization": "9lbr4YVd6WeOTucnfPTnTJnB0i4gVH7E8sExiYVI"
       };
 
       var options = { headers: headers};
 
       try {
 
-      let data = await axios.get('https://devapi.arta.sandeza.io/integration/v1/helpdesk/contact/info/'+ requesterId , options);
+      let data = await axios.get('https://d3v-sandeza.zendesk.com/api/v2/users/'+ requesterId , options);
 
-      this.onDialCallFromFD(data.data.message.name,data.data.message.number)
+      // this.onDialCallFromFD(data.data.message.name,data.data.message.number)
+      this.onDialCallFromFD(data.data.message.name,data.data.message.phone)
 
       } catch(e) {
         console.log(e)
@@ -965,156 +972,156 @@ export default {
 
     },
 
-    async getCallLogs() {
+    // async getCallLogs() {
 
-      var headers = {
-          "Content-Type": "application/json",
-          "Authorization": this.access_key + ":" + this.integration_id
-      };
+    //   var headers = {
+    //       "Content-Type": "application/json",
+    //       "Authorization": "9lbr4YVd6WeOTucnfPTnTJnB0i4gVH7E8sExiYVI"
+    //   };
 
-      var options = { headers: headers};
+    //   var options = { headers: headers};
 
-      try {
+    //   try {
 
-        let data = await axios.get('https://devapi.arta.sandeza.io/integration/v1/storage/' + this.agentUserName + '/CALLLOGS' , options);
-        this.call_history = JSON.parse(data.data.storageValue);
+    //     let data = await axios.get('https://d3v-sandeza.zendesk.com/api/v2/users/' + this.agentUserName + '/CALLLOGS' , options);
+    //     this.call_history = JSON.parse(data.data.storageValue);
 
-      } catch(e) {
-        console.log(e)
-        this.call_history = []
-      }
+    //   } catch(e) {
+    //     console.log(e)
+    //     this.call_history = []
+    //   }
 
-    },
+    // },
 
-    async getCountryCode() {
+    // async getCountryCode() {
 
-      var headers = {
-          "Content-Type": "application/json",
-          "Authorization": this.access_key + ":" + this.integration_id
-      };
+    //   var headers = {
+    //       "Content-Type": "application/json",
+    //       "Authorization": this.access_key + ":" + this.integration_id
+    //   };
 
-      var options = { headers: headers};
+    //   var options = { headers: headers};
 
-      try {
+    //   try {
 
-        let data = await axios.get('https://devapi.arta.sandeza.io/integration/v1/storage/' + this.agentUserName + '/COUNTRYCODE' , options);
-        this.selectedCountry = JSON.parse(data.data.storageValue);
+    //     let data = await axios.get('https://devapi.arta.sandeza.io/integration/v1/storage/' + this.agentUserName + '/COUNTRYCODE' , options);
+    //     this.selectedCountry = JSON.parse(data.data.storageValue);
 
-      } catch(e) {
-        console.log(e)
-      }
+    //   } catch(e) {
+    //     console.log(e)
+    //   }
 
-    },
+    // },
 
-    async getLanguage() {
+    // async getLanguage() {
 
-      var headers = {
-          "Content-Type": "application/json",
-          "Authorization": this.access_key + ":" + this.integration_id
-      };
+    //   var headers = {
+    //       "Content-Type": "application/json",
+    //       "Authorization": this.access_key + ":" + this.integration_id
+    //   };
 
-      var options = { headers: headers};
+    //   var options = { headers: headers};
 
-      try {
+    //   try {
 
-        let data = await axios.get('https://devapi.arta.sandeza.io/integration/v1/storage/' + this.agentUserName + '/LANGUAGE' , options);
-        this.languageSelected = data.data.storageValue;
+    //     let data = await axios.get('https://devapi.arta.sandeza.io/integration/v1/storage/' + this.agentUserName + '/LANGUAGE' , options);
+    //     this.languageSelected = data.data.storageValue;
 
-      } catch(e) {
-        console.log(e)
-      }
+    //   } catch(e) {
+    //     console.log(e)
+    //   }
 
-    },
+    // },
 
-    async storeCallLogs(payload) {
+    // async storeCallLogs(payload) {
 
-      var headers = {
-          "Content-Type": "application/json",
-          "Authorization": this.access_key + ":" + this.integration_id
-      };
+    //   var headers = {
+    //       "Content-Type": "application/json",
+    //       "Authorization": this.access_key + ":" + this.integration_id
+    //   };
 
-      var options = { headers: headers};
+    //   var options = { headers: headers};
 
-      this.call_history.unshift(payload);
+    //   this.call_history.unshift(payload);
 
-      try {
+    //   try {
 
-        console.log(payload)
+    //     console.log(payload)
 
-      await axios.post('https://devapi.arta.sandeza.io/integration/v1/storage', { agentId : this.agentUserName , storageKey : "CALLLOGS" , storageValue : JSON.stringify(this.call_history) }, options);
+    //   await axios.post('https://devapi.arta.sandeza.io/integration/v1/storage', { agentId : this.agentUserName , storageKey : "CALLLOGS" , storageValue : JSON.stringify(this.call_history) }, options);
 
-      } catch(e) {
-        console.log(e)
-      }
+    //   } catch(e) {
+    //     console.log(e)
+    //   }
 
-    },
+    // },
 
-    async storeLanguageSelected(payload) {
+    // async storeLanguageSelected(payload) {
 
-      var headers = {
-          "Content-Type": "application/json",
-          "Authorization": this.access_key + ":" + this.integration_id
-      };
+    //   var headers = {
+    //       "Content-Type": "application/json",
+    //       "Authorization": this.access_key + ":" + this.integration_id
+    //   };
 
-      var options = { headers: headers};
+    //   var options = { headers: headers};
 
-      try {
+    //   try {
 
-        console.log(payload)
+    //     console.log(payload)
 
-      await axios.post('https://devapi.arta.sandeza.io/integration/v1/storage', { agentId : this.agentUserName , storageKey : "LANGUAGE" , storageValue : payload.language }, options);
+    //   await axios.post('https://devapi.arta.sandeza.io/integration/v1/storage', { agentId : this.agentUserName , storageKey : "LANGUAGE" , storageValue : payload.language }, options);
 
-      } catch(e) {
-        console.log(e)
-      }
+    //   } catch(e) {
+    //     console.log(e)
+    //   }
 
-    },
-    async storeCountrySelected(payload) {
+    // },
+    // async storeCountrySelected(payload) {
 
-      var headers = {
-          "Content-Type": "application/json",
-          "Authorization": this.access_key + ":" + this.integration_id
-      };
+    //   var headers = {
+    //       "Content-Type": "application/json",
+    //       "Authorization": this.access_key + ":" + this.integration_id
+    //   };
 
-      var options = { headers: headers};
+    //   var options = { headers: headers};
 
-      try {
+    //   try {
 
-        console.log(payload)
+    //     console.log(payload)
 
-      await axios.post('https://devapi.arta.sandeza.io/integration/v1/storage', { agentId : this.agentUserName , storageKey : "COUNTRYCODE" , storageValue : payload.countrySelected }, options);
+    //   await axios.post('https://devapi.arta.sandeza.io/integration/v1/storage', { agentId : this.agentUserName , storageKey : "COUNTRYCODE" , storageValue : payload.countrySelected }, options);
 
-      } catch(e) {
-        console.log(e)
-      }
+    //   } catch(e) {
+    //     console.log(e)
+    //   }
 
-    },
+    // },
     openLogin(){
       window.open(this.connect_url);
     },
-    onDialCallConf() {
-      let thisKey = this;
-      let num =  connect.Endpoint.byPhoneNumber("+" + this.selectedCountry.code + this.dialedNumber);
-      this.transferName = "Unknown";
-      this.transferNumber = "+" + this.selectedCountry.code + this.dialedNumber;;
+    // onDialCallConf(connect,lily) {
+    //   let thisKey = this;
+    //   let num =  connect.Endpoint.byPhoneNumber("+" + this.selectedCountry.code + this.dialedNumber);
+    //   this.transferName = "Unknown";
+    //   this.transferNumber = "+" + this.selectedCountry.code + this.dialedNumber;
 
-      this.agentObject.getContacts(lily.ContactType.VOICE)[0].addConnection(num, {
-        success: function(data) {
-          thisKey.toggle_dial_pad = false;
-          thisKey.callStatus = "Conference";
-          thisKey.toggle_call_block = true;
-          thisKey.confCall['callerOneStatus'] = "On Hold"
-          thisKey.confCall['callerTwoStatus'] = "Connecting"
-          console.log("transfer success");
-          console.log(data);
-         // thisKey.checkTransferStatus();
-        },
-        failure: function(data) {
-          console.log("transfer failed");
-          console.log(data);
-        }
-      });
-    },
+    //   this.agentObject.getContacts(lily.ContactType.VOICE)[0].addConnection(num, {
+    //     success: function(data) {
+    //       thisKey.toggle_dial_pad = false;
+    //       thisKey.callStatus = "Conference";
+    //       thisKey.toggle_call_block = true;
+    //       thisKey.confCall['callerOneStatus'] = "On Hold"
+    //       thisKey.confCall['callerTwoStatus'] = "Connecting"
+    //       console.log("transfer success");
+    //       console.log(data);
+    //      // thisKey.checkTransferStatus();
+    //     },
+    //     failure: function(data) {
+    //       console.log("transfer failed");
+    //       console.log(data);
+    //     }
+    //   });
+    // },
 
     backToDialpad(){
       this.callPageUrl = "dialpad"
@@ -1127,233 +1134,233 @@ export default {
       location.reload();
     },
 
-    onHoldAll(){
-      let thisKey = this;
-      let contact = this.contactObject;
+    // onHoldAll(){
+    //   let thisKey = this;
+    //   let contact = this.contactObject;
 
-      try {
-        contact.getInitialConnection().hold({
-          success: function() { 
-            thisKey.confCall.callerOneStatus = "On Hold";
-            console.log("changed caller one to hold" + contact.getInitialConnection().isOnHold());
-          },
-          failure: function() { 
-            //thisKey.confCall.callerOneStatus = thisKey.confCall.callerOneStatus == "Joined" ? "Joined" : "Connected";
-            console.log("changed caller one to hold" + contact.getInitialConnection().isOnHold());
-          }
-        });
-      } catch (e) {
-        console.log("changed iitial caller one to hold failed")
-      }
-      try {
-        contact.getSingleActiveThirdPartyConnection().hold({
-          success: function() { 
-            thisKey.confCall.callerTwoStatus = "On Hold" ;
-            console.log("changed caller two to hold" + contact.getSingleActiveThirdPartyConnection().isOnHold());
-          },
-          failure: function() { 
-           // thisKey.confCall.callerTwoStatus = contact.getSingleActiveThirdPartyConnection().isOnHold() ? "On Hold" : "Connected" ;
-            console.log("changed caller two to hold" + contact.getSingleActiveThirdPartyConnection().isOnHold());
-          }
-        });
-      } catch (e) {
-        console.log("changed iitial caller one to hold failed")
-      }
-    },
-     onEndCallConf(caller){
-      let thisKey = this;
-      let contact = this.contactObject;
-      if(caller == "one") {
-        try {
-          contact.getInitialConnection().destroy({
-            success: function() {
-              thisKey.callStatus = "Connected";
-              thisKey.callingName = thisKey.transferName;
-              thisKey.callingNumber = thisKey.transferNumber;
-              console.log("Ended Initial");
-            },
-            failure: function() { 
-              console.log("Ended Initial failed");
-            }
-          });
-        } catch (e) {
-          console.log("Ended Initial failed")
-        }
-      } else {
-        try {
-          let conn = contact.getSingleActiveThirdPartyConnection();
+    //   try {
+    //     contact.getInitialConnection().hold({
+    //       success: function() { 
+    //         thisKey.confCall.callerOneStatus = "On Hold";
+    //         console.log("changed caller one to hold" + contact.getInitialConnection().isOnHold());
+    //       },
+    //       failure: function() { 
+    //         //thisKey.confCall.callerOneStatus = thisKey.confCall.callerOneStatus == "Joined" ? "Joined" : "Connected";
+    //         console.log("changed caller one to hold" + contact.getInitialConnection().isOnHold());
+    //       }
+    //     });
+    //   } catch (e) {
+    //     console.log("changed iitial caller one to hold failed")
+    //   }
+    //   try {
+    //     contact.getSingleActiveThirdPartyConnection().hold({
+    //       success: function() { 
+    //         thisKey.confCall.callerTwoStatus = "On Hold" ;
+    //         console.log("changed caller two to hold" + contact.getSingleActiveThirdPartyConnection().isOnHold());
+    //       },
+    //       failure: function() { 
+    //        // thisKey.confCall.callerTwoStatus = contact.getSingleActiveThirdPartyConnection().isOnHold() ? "On Hold" : "Connected" ;
+    //         console.log("changed caller two to hold" + contact.getSingleActiveThirdPartyConnection().isOnHold());
+    //       }
+    //     });
+    //   } catch (e) {
+    //     console.log("changed iitial caller one to hold failed")
+    //   }
+    // },
+    //  onEndCallConf(caller){
+    //   let thisKey = this;
+    //   let contact = this.contactObject;
+    //   if(caller == "one") {
+    //     try {
+    //       contact.getInitialConnection().destroy({
+    //         success: function() {
+    //           thisKey.callStatus = "Connected";
+    //           thisKey.callingName = thisKey.transferName;
+    //           thisKey.callingNumber = thisKey.transferNumber;
+    //           console.log("Ended Initial");
+    //         },
+    //         failure: function() { 
+    //           console.log("Ended Initial failed");
+    //         }
+    //       });
+    //     } catch (e) {
+    //       console.log("Ended Initial failed")
+    //     }
+    //   } else {
+    //     try {
+    //       let conn = contact.getSingleActiveThirdPartyConnection();
 
-          console.log(conn.isConnected() , conn.isConnecting())
+    //       console.log(conn.isConnected() , conn.isConnecting())
 
-          if(conn.isConnected() || conn.isConnecting()) {
-            contact.getSingleActiveThirdPartyConnection().destroy({
-              success: function() { 
-                thisKey.callStatus = "Connected";
-                console.log("Ended external success");
-              },
-              failure: function() { 
-                console.log("Ended external failed");
-              }
-            });
-          } else {
-            thisKey.callStatus = "Connected";
-          }
-        } catch (e) {
-          thisKey.callStatus = "Connected";
-          console.log("Ended external failed");
-          console.log(e)
-        }
-      }
-    },
-    onResumeConf(caller){
-      let thisKey = this;
-      let contact = this.contactObject;
-      thisKey.confCall.callerOneStatus = "Connected";
-      thisKey.confCall.callerTwoStatus = "Connected";
-      if(caller == "one") {
-        try {
-          contact.getInitialConnection().resume({
-            success: function() { 
-              thisKey.confCall.callerOneStatus = "Connected";
-              console.log("changed caller one to hold" + contact.getInitialConnection().isOnHold());
-            },
-            failure: function() { 
-              //thisKey.confCall.callerOneStatus = thisKey.confCall.callerOneStatus == "Joined" ? "Joined" : "Connected";
-              console.log("changed caller one to hold" + contact.getInitialConnection().isOnHold());
-            }
-          });
-        } catch (e) {
-          console.log("changed iitial caller one to hold failed")
-        }
-      } else {
-        try {
-          contact.getSingleActiveThirdPartyConnection().resume({
-            success: function() { 
-              thisKey.confCall.callerTwoStatus = "Connected" ;
-              console.log("changed caller two to hold" + contact.getSingleActiveThirdPartyConnection().isOnHold());
-            },
-            failure: function() { 
-              //thisKey.confCall.callerTwoStatus = contact.getSingleActiveThirdPartyConnection().isOnHold() ? "On Hold" : "Connected" ;
-              console.log("changed caller two to hold" + contact.getSingleActiveThirdPartyConnection().isOnHold());
-            }
-          });
-        } catch (e) {
-          console.log("changed iitial caller one to hold failed")
-        }
-      }
-    },
-    onHoldConf(caller){
-      let thisKey = this;
-      let contact = this.contactObject;
-      if(caller == "one") {
-        try {
-          contact.getInitialConnection().hold({
-            success: function() { 
-              thisKey.confCall.callerOneStatus = "On Hold";
-              console.log("changed caller one to hold" + contact.getInitialConnection().isOnHold());
-            },
-            failure: function() { 
-              //thisKey.confCall.callerOneStatus = thisKey.confCall.callerOneStatus == "Joined" ? "Joined" : "Connected";
-              console.log("changed caller one to hold" + contact.getInitialConnection().isOnHold());
-            }
-          });
-        } catch (e) {
-          console.log("changed iitial caller one to hold failed")
-        }
-      } else {
-        try {
-          contact.getSingleActiveThirdPartyConnection().hold({
-            success: function() { 
-              thisKey.confCall.callerTwoStatus = "On Hold" ;
-              console.log("changed caller two to hold" + contact.getSingleActiveThirdPartyConnection().isOnHold());
-            },
-            failure: function() { 
-              //thisKey.confCall.callerTwoStatus = contact.getSingleActiveThirdPartyConnection().isOnHold() ? "On Hold" : "Connected" ;
-              console.log("changed caller two to hold" + contact.getSingleActiveThirdPartyConnection().isOnHold());
-            }
-          });
-        } catch (e) {
-          console.log("changed iitial caller one to hold failed")
-        }
-      }
-    },
-    onSwapCall(){
-      let thisKey = this;
-      let contact = this.contactObject;
-      contact.toggleActiveConnections({
-        success: function() { 
-            thisKey.confCall.callerOneStatus = contact.getInitialConnection().isOnHold() ?  "Connected" : "On Hold" ;
-            thisKey.confCall.callerTwoStatus = contact.getSingleActiveThirdPartyConnection().isOnHold() ? "Connected" : "On Hold" ;
-         },
-        failure: function() {
-          thisKey.confCall.callerOneStatus = contact.getInitialConnection().isOnHold() ? "Connected" : "On Hold" ;
-          thisKey.confCall.callerTwoStatus = contact.getSingleActiveThirdPartyConnection().isOnHold() ? "Connected" : "On Hold" ;
-          console.log("toggle fail");
-        }
-      });
-    },
-    onMuteConf(){
-      this.onMute = !this.onMute;
+    //       if(conn.isConnected() || conn.isConnecting()) {
+    //         contact.getSingleActiveThirdPartyConnection().destroy({
+    //           success: function() { 
+    //             thisKey.callStatus = "Connected";
+    //             console.log("Ended external success");
+    //           },
+    //           failure: function() { 
+    //             console.log("Ended external failed");
+    //           }
+    //         });
+    //       } else {
+    //         thisKey.callStatus = "Connected";
+    //       }
+    //     } catch (e) {
+    //       thisKey.callStatus = "Connected";
+    //       console.log("Ended external failed");
+    //       console.log(e)
+    //     }
+    //   }
+    // },
+    // onResumeConf(caller){
+    //   let thisKey = this;
+    //   let contact = this.contactObject;
+    //   thisKey.confCall.callerOneStatus = "Connected";
+    //   thisKey.confCall.callerTwoStatus = "Connected";
+    //   if(caller == "one") {
+    //     try {
+    //       contact.getInitialConnection().resume({
+    //         success: function() { 
+    //           thisKey.confCall.callerOneStatus = "Connected";
+    //           console.log("changed caller one to hold" + contact.getInitialConnection().isOnHold());
+    //         },
+    //         failure: function() { 
+    //           //thisKey.confCall.callerOneStatus = thisKey.confCall.callerOneStatus == "Joined" ? "Joined" : "Connected";
+    //           console.log("changed caller one to hold" + contact.getInitialConnection().isOnHold());
+    //         }
+    //       });
+    //     } catch (e) {
+    //       console.log("changed iitial caller one to hold failed")
+    //     }
+    //   } else {
+    //     try {
+    //       contact.getSingleActiveThirdPartyConnection().resume({
+    //         success: function() { 
+    //           thisKey.confCall.callerTwoStatus = "Connected" ;
+    //           console.log("changed caller two to hold" + contact.getSingleActiveThirdPartyConnection().isOnHold());
+    //         },
+    //         failure: function() { 
+    //           //thisKey.confCall.callerTwoStatus = contact.getSingleActiveThirdPartyConnection().isOnHold() ? "On Hold" : "Connected" ;
+    //           console.log("changed caller two to hold" + contact.getSingleActiveThirdPartyConnection().isOnHold());
+    //         }
+    //       });
+    //     } catch (e) {
+    //       console.log("changed iitial caller one to hold failed")
+    //     }
+    //   }
+    // },
+    // onHoldConf(caller){
+    //   let thisKey = this;
+    //   let contact = this.contactObject;
+    //   if(caller == "one") {
+    //     try {
+    //       contact.getInitialConnection().hold({
+    //         success: function() { 
+    //           thisKey.confCall.callerOneStatus = "On Hold";
+    //           console.log("changed caller one to hold" + contact.getInitialConnection().isOnHold());
+    //         },
+    //         failure: function() { 
+    //           //thisKey.confCall.callerOneStatus = thisKey.confCall.callerOneStatus == "Joined" ? "Joined" : "Connected";
+    //           console.log("changed caller one to hold" + contact.getInitialConnection().isOnHold());
+    //         }
+    //       });
+    //     } catch (e) {
+    //       console.log("changed iitial caller one to hold failed")
+    //     }
+    //   } else {
+    //     try {
+    //       contact.getSingleActiveThirdPartyConnection().hold({
+    //         success: function() { 
+    //           thisKey.confCall.callerTwoStatus = "On Hold" ;
+    //           console.log("changed caller two to hold" + contact.getSingleActiveThirdPartyConnection().isOnHold());
+    //         },
+    //         failure: function() { 
+    //           //thisKey.confCall.callerTwoStatus = contact.getSingleActiveThirdPartyConnection().isOnHold() ? "On Hold" : "Connected" ;
+    //           console.log("changed caller two to hold" + contact.getSingleActiveThirdPartyConnection().isOnHold());
+    //         }
+    //       });
+    //     } catch (e) {
+    //       console.log("changed iitial caller one to hold failed")
+    //     }
+    //   }
+    // },
+    // onSwapCall(){
+    //   let thisKey = this;
+    //   let contact = this.contactObject;
+    //   contact.toggleActiveConnections({
+    //     success: function() { 
+    //         thisKey.confCall.callerOneStatus = contact.getInitialConnection().isOnHold() ?  "Connected" : "On Hold" ;
+    //         thisKey.confCall.callerTwoStatus = contact.getSingleActiveThirdPartyConnection().isOnHold() ? "Connected" : "On Hold" ;
+    //      },
+    //     failure: function() {
+    //       thisKey.confCall.callerOneStatus = contact.getInitialConnection().isOnHold() ? "Connected" : "On Hold" ;
+    //       thisKey.confCall.callerTwoStatus = contact.getSingleActiveThirdPartyConnection().isOnHold() ? "Connected" : "On Hold" ;
+    //       console.log("toggle fail");
+    //     }
+    //   });
+    // },
+    // onMuteConf(){
+    //   this.onMute = !this.onMute;
       
-      if(this.onMute){
-        this.agentObject.mute();
-      } else {
-        this.agentObject.unmute();
-      }
-    },
-    onJoinCall(){
-      let thisKey = this;
-      let contact = this.contactObject;
+    //   if(this.onMute){
+    //     this.agentObject.mute();
+    //   } else {
+    //     this.agentObject.unmute();
+    //   }
+    // },
+    // onJoinCall(){
+    //   let thisKey = this;
+    //   let contact = this.contactObject;
 
-      contact.conferenceConnections({
-        success: function() { 
-          console.log("Joined call")
-          thisKey.confCall.callerOneStatus = "Joined"
-          thisKey.confCall.callerTwoStatus = "Joined"
-         },
-        failure: function(err) {
-            console.log("Join call failed");
-            console.log(err);
-         }
-      });
-    },
-    onLeaveCall() {
-      let contact = this.contactObject;
-      contact.getAgentConnection().destroy();
-    },
-    callTransfer(name,endpoint){
-      console.log("Call transfer Initiated to " + name);
-      let thisKey = this;
-      this.transferName = name;
-      this.transferNumber = endpoint.type;
+    //   contact.conferenceConnections({
+    //     success: function() { 
+    //       console.log("Joined call")
+    //       thisKey.confCall.callerOneStatus = "Joined"
+    //       thisKey.confCall.callerTwoStatus = "Joined"
+    //      },
+    //     failure: function(err) {
+    //         console.log("Join call failed");
+    //         console.log(err);
+    //      }
+    //   });
+    // },
+    // onLeaveCall() {
+    //   let contact = this.contactObject;
+    //   contact.getAgentConnection().destroy();
+    // },
+    // callTransfer(name,endpoint,lily){
+    //   console.log("Call transfer Initiated to " + name);
+    //   let thisKey = this;
+    //   this.transferName = name;
+    //   this.transferNumber = endpoint.type;
 
-      this.agentObject.getContacts(lily.ContactType.VOICE)[0].addConnection(endpoint, {
-        success: function(data) {
-          thisKey.toggle_quick_connect = false;
-          thisKey.callStatus = "Conference";
-          thisKey.toggle_call_block = true;
-          thisKey.confCall['callerOneStatus'] = "On Hold"
-          thisKey.confCall['callerTwoStatus'] = "Connecting"
-          console.log("transfer success");
-          console.log(data);
-         // thisKey.checkTransferStatus();
-        },
-        failure: function(data) {
-          console.log("transfer failed");
-          console.log(data);
-        }
-      });
-    },
-    onTransferCall() {
-      this.pageUrl = "call";
-      this.toggle_call_block = false
-      this.toggle_quick_connect = true;
-    },
-    onDialPadCall() {
-      this.pageUrl = "call";
-      this.toggle_call_block = false
-      this.toggle_dial_pad = true;
-    },
+    //   this.agentObject.getContacts(lily.ContactType.VOICE)[0].addConnection(endpoint, {
+    //     success: function(data) {
+    //       thisKey.toggle_quick_connect = false;
+    //       thisKey.callStatus = "Conference";
+    //       thisKey.toggle_call_block = true;
+    //       thisKey.confCall['callerOneStatus'] = "On Hold"
+    //       thisKey.confCall['callerTwoStatus'] = "Connecting"
+    //       console.log("transfer success");
+    //       console.log(data);
+    //      // thisKey.checkTransferStatus();
+    //     },
+    //     failure: function(data) {
+    //       console.log("transfer failed");
+    //       console.log(data);
+    //     }
+    //   });
+    // },
+    // onTransferCall() {
+    //   this.pageUrl = "call";
+    //   this.toggle_call_block = false
+    //   this.toggle_quick_connect = true;
+    // },
+    // onDialPadCall() {
+    //   this.pageUrl = "call";
+    //   this.toggle_call_block = false
+    //   this.toggle_dial_pad = true;
+    // },
     backToCallDial() {
       this.pageUrl = "call";
       this.toggle_call_block = true
@@ -1402,6 +1409,7 @@ export default {
     },
     checkLogin() {
       let active = localStorage.getItem("activeTabTime")
+      console.log("THIS IS ACITVE",active)
       if( moment(active).valueOf() > moment(this.currentActiveTabTime).valueOf()) {
         location.reload();
       }
@@ -1411,37 +1419,44 @@ export default {
 
       
       let activeTab = localStorage.getItem("activeTab")
+      console.log("activeTab",activeTab)
+      
       let activeTabTime = localStorage.getItem("activeTabTime")
 
       this.currentActiveTab = activeTab
+      console.log("currentActiveTab",this.currentActiveTab)
       this.currentActiveTabTime = activeTabTime
+      console.log("currentActiveTabTime",this.currentActiveTabTime)
 
       if(activeTab == undefined) {
         localStorage.setItem("activeTab", "0");
         localStorage.setItem("activeTabTime", moment().format());
+        console.log("THIS IS LOCALSTORAGE",localStorage.setItem("activeTabTime", moment().format()))
       } else if(activeTab == "0") {
         localStorage.setItem("activeTab", "1");
         this.timer = setInterval(this.checkLogin,3000)
+        console.log("THIS IS timer",this.timer)
       }
 
       var thisKey = this;
       var loginUrl = this.connect_url;
-      //var loginUrl = "https://sandeza.awsapps.com/connect/ccp#/";
+      // var loginUrl = "https://sandeza-prod.awsapps.com/connect/ccp#/";
 
        window.addEventListener('message', function(event) {
         if(event.data.action == "calllogs"){
           if(event.data.callData != null) {
             let eventData = event.data.callData;
-            let eventDataRev = eventData.reverse()
+            // let eventDataRev = eventData.reverse()
             thisKey.call_history = eventData.slice(0,25);
           }
           thisKey.contacts = event.data.contactList;
+          console.log("THIS IS CONTACTSSSS",thisKey.contacts)
           thisKey.languageSelected = event.data.language;
           thisKey.selectedCountry = JSON.parse(event.data.countrySelected);
           thisKey.loggedin = true;
           //thisKey.homePageUrl = 'calllog';
         } else if(event.data.action == "createTicketSuccess"){
-          //console.log("--> recived created ticket id on connect app <--" + JSON.stringify(event.data.ticket_id));
+          console.log("--> recived created ticket id on connect app <--" + JSON.stringify(event.data.ticket_id));
           thisKey.newCreatedTicket = event.data.ticket_id;
           //if(thisKey.outBoundCall) {
             let ticket = {}
@@ -1467,26 +1482,30 @@ export default {
           thisKey.contacts = event.data.searchResult;
         } 
       } , false);
-
+      
 
       if(this.currentActiveTab == "0") {
-        this.connectObject = connect.core.initCCP(containerDiv, {
+        this.connectObject = connect.core.initCCP(defaultCCP, {
           ccpUrl: loginUrl,
-          loginPopup:    false,
+          loginPopup:    true,
           region: "us-east-1",          
           softphone:     {   
             allowFramedSoftphone : true  
           }
         });
+        console.log("THIS IS CORE",this.connectObject)
 
+      }else{
+        console.log("ERRORRrrrrr")
       }
+      
 
       // saving agent object to state
       connect.agent(function(agent){
         thisKey.agentObject = agent;
         thisKey.agentStatus = agent.getState().name;
         thisKey.agentStates = agent.getAgentStates();
-        //console.log(agent.getDialableCountries());
+        console.log("THIS IS AGENTSSSS",agent.getDialableCountries());
         thisKey.dialableCountries = dialableCountries(agent.getDialableCountries());
         //console.log( "===> agent status " + JSON.stringify(agent.getAgentStates()));
 
@@ -1511,9 +1530,9 @@ export default {
       eventBus.subscribe(connect.AgentEvents.INIT, function () {
         var agentConfig = thisKey.agentObject.getConfiguration();
         thisKey.agentUserName = agentConfig.username;
-        thisKey.getCallLogs()
-        thisKey.getCountryCode()
-        thisKey.getLanguage()
+        // thisKey.getCallLogs()
+        // thisKey.getCountryCode()
+        // thisKey.getLanguage()
         thisKey.getContacts()
         thisKey.loggedin = true; // remove
         // moving to dataload thisKey.loggedin = true;
@@ -1716,8 +1735,8 @@ export default {
             passData.contactName = thisKey.callingName;
             passData.contactNumber = thisKey.callingNumber;
             passData.calledTime = moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
-            thisKey.storeCallLogs(passData)
-           // parent.postMessage(passData,"*");
+            // thisKey.storeCallLogs(passData)
+           parent.postMessage(passData,"*");
             //thisKey.call_history.unshift(passData);
             console.log("connected send **> " + JSON.stringify(passData))
           } else {
@@ -1745,7 +1764,7 @@ export default {
           }
         });
 
-        contact.onMissed(function(contact) { 
+        contact.onMissed(function() { 
           console.log("==> On Missed---------------")
           
           var passData = {};
@@ -1758,8 +1777,8 @@ export default {
             passData.contactName = thisKey.callingName;
             passData.contactNumber = thisKey.callingNumber;
             passData.calledTime = moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
-            thisKey.storeCallLogs(passData)
-            //parent.postMessage(passData,"*");
+            // thisKey.storeCallLogs(passData)
+            parent.postMessage(passData,"*");
             //thisKey.call_history.unshift(passData);
             console.log("missed send **> " + JSON.stringify(passData))
           }
@@ -1780,7 +1799,7 @@ export default {
           thisKey.outBoundCall = false;
         });
 
-        contact.onDestroy(function(contact) { 
+        contact.onDestroy(function() { 
           console.log("==> On destroyed---------------")
           thisKey.callStatus = "Destroyed";
           // thisKey.agentStatus = "Available"
@@ -1799,7 +1818,7 @@ export default {
           thisKey.addNoteFor = ""
         });
 
-        contact.onACW(function(contact) { 
+        contact.onACW(function() { 
           console.log("==> On ACW---------------")
           thisKey.callStatus = "ACW";
         });
@@ -1855,10 +1874,10 @@ export default {
       //parent.postMessage(passData,"*");
      // console.log("create note " + JSON.stringify(passData));
     },
-    setAvailable(){
+    setAvailable(connect){
       console.log("set available triggered")
       this.setAvailableTrigger = true;
-      let thisKey = this;
+      // let thisKey = this;
       var routableState = this.agentObject.getAgentStates().filter(function(state) {
         return state.type === connect.AgentStateType.ROUTABLE;
       })[0];
@@ -1998,6 +2017,7 @@ export default {
         })
     },
     onDeclineCall(){
+      let thisKey = this;
       console.log("Decline Button Clicked")
       this.callStatus = "Ended"
       this.contactObject.getInitialConnection().destroy({
@@ -2017,7 +2037,7 @@ export default {
           }
         })
     },
-    onDialCall(){
+    onDialCall(connect){
       this.toggle_call_block = true;
       this.outBoundCall = true;
       this.callingNumber = "+" + this.selectedCountry.code + this.dialedNumber;
@@ -2037,8 +2057,8 @@ export default {
           passData.contactName = thisKey.callingName;
           passData.contactNumber = thisKey.callingNumber;
           passData.calledTime = moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
-          thisKey.storeCallLogs(passData)
-          //parent.postMessage(passData,"*");
+          // thisKey.storeCallLogs(passData)
+          parent.postMessage(passData,"*");
           thisKey.call_history.unshift(passData);
           console.log("Dialed send **> " + JSON.stringify(passData))
         },
@@ -2060,7 +2080,7 @@ export default {
         }
       });
     },
-    onDialCallFromFD(name,number){
+    onDialCallFromFD(name,number,connect){
       console.log("make FD call ==> " + name + " " + number)
       this.toggle_call_block = true;
       this.outBoundCall = true;
@@ -2082,8 +2102,8 @@ export default {
           passData.contactName = thisKey.callingName;
           passData.contactNumber = thisKey.callingNumber;
           passData.calledTime = moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
-          thisKey.storeCallLogs(passData)
-          //parent.postMessage(passData,"*");
+          // thisKey.storeCallLogs(passData)
+          parent.postMessage(passData,"*");
           thisKey.call_history.unshift(passData);
           console.log("Dialed send **> " + JSON.stringify(passData))
         },
@@ -2151,7 +2171,7 @@ export default {
       //   });
       // }
     },
-    dialFromHistory(number,name,contactId) {
+    dialFromHistory(number,name,contactId,connect) {
       this.dialedNumber = number;
       this.callingNumber = number;
       this.callingName = name;
@@ -2175,8 +2195,8 @@ export default {
           passData.contactNumber = thisKey.callingNumber;
           passData.calledTime = moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
           passData.callType = "outbound"
-          thisKey.storeCallLogs(passData)
-          //parent.postMessage(passData,"*");
+          // thisKey.storeCallLogs(passData)
+          parent.postMessage(passData,"*");
           thisKey.call_history.unshift(passData);
           console.log("Dialed history send **> " + JSON.stringify(passData))
         },
@@ -2210,11 +2230,11 @@ export default {
 </script>
 
 <style>
-/* #containerDiv {
+#containerDiv {
 		width: 324px; 
 		height: 465px; 
 		overflow: hidden;
-	} */
+	}
 
 .my-nav-active {
   color: #00425f !important;
