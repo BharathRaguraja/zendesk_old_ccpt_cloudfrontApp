@@ -9,6 +9,7 @@
         >
         <b-form-input id="contactName" v-model="contactName" size="sm" :state="nameState" trim></b-form-input> </b-form-group>
 
+
         <b-form-group
         id="contactNumber"
         label="Contact Number"
